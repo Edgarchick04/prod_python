@@ -1,0 +1,6 @@
+# secrets
+final_project/config.py
+.env
+
+# IDE
+.idea/
