@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 
 from states.walk_state import WalkState, StartState
 from states.user_walks import UserWalksState
-from .keyboards import WalkKeyboard, MainKeyboard, UserWalksKeyboard, TaskKeyboard
+from handlers.keyboards import WalkKeyboard, MainKeyboard, UserWalksKeyboard, TaskKeyboard
 from services.route_generator import route_generator
 from services.statistics import get_stats, get_walks_data, set_stats, set_walks_data
 from services.task_generator import task_generator
@@ -25,7 +25,7 @@ dp.include_router(command_router)
 
 
 @command_router.message(CommandStart())
-async def start_cmd_hamdler(message: Message, state: FSMContext):
+async def start_cmd_handler(message: Message, state: FSMContext):
     """Обработчик команды /start"""
     await message.answer(
         "Привет! Я твой помощник для прогулок.\nНачни прогулку или посмотри историю прошлых прогулок.",
@@ -137,7 +137,7 @@ async def waiting_geo_handler(message: Message, state: FSMContext):
 
 
 @command_router.message(WalkState.route_accessing)
-async def route_acsessing_handler(message: Message, state: FSMContext):
+async def route_accessing_handler(message: Message, state: FSMContext):
     """Обработчик команд после генерации и отправки маршрута:
        user выбирает сгенерировать маршрут заново или начать прогулку"""
     if message.text == "Да, начать прогулку":
@@ -192,7 +192,6 @@ async def in_walk_handler(message: Message, state: FSMContext):
     """Обработчик команд для выполнения заданий во время прогулки"""
     data = await state.get_data()
     task_state = data.get("task_state", "no_task")
-    print(f"DEBUG: Получено сообщение: '{message.text}', task_state: '{task_state}'")
     if task_state == "no_task":
         if message.text == "Сгенерировать задание":
             current_task = await task_generator()
@@ -249,7 +248,7 @@ async def in_walk_handler(message: Message, state: FSMContext):
                 "task_state": "no_task"
             })
             await message.answer(
-                f"Твое задание отменено",
+                "Твое задание отменено",
                 reply_markup=TaskKeyboard.task_generation_keyboard
             )
         elif message.text == "Завершить прогулку":
