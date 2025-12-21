@@ -1,7 +1,20 @@
-from typing import Any, Dict
+import asyncio
+from .gigachat_client import GigaChatClient
+from .prompts import build_task_prompt
 
-async def task_generator() -> Dict[str, Any]:
-    """потом докрутим с запросами к ИИ, добавим параметры и наверное переделаем в class"""
-    return {
-        "description": "сделай что-то",
-    }
+class TaskGenerator:
+    def __init__(self):
+        self.client = GigaChatClient()
+
+    def _generate_sync(self, mood: str, activity: str, group_size: str) -> str:
+        prompt = build_task_prompt(mood, activity, group_size)
+        return self.client.chat(prompt).strip()
+
+    async def generate(self, mood: str, activity: str, group_size: str) -> str:
+        return await asyncio.to_thread(
+            self._generate_sync,
+            mood,
+            activity,
+            group_size,
+        )
+

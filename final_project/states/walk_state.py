@@ -3,6 +3,9 @@ from aiogram.fsm.state import StatesGroup, State
 
 class WalkState(StatesGroup):
     choosing_duration = State()
+    choosing_mood = State()
+    choosing_activity = State()
+    choosing_group_size = State()
     waiting_geo = State()
     route_generation = State()
     route_accessing = State()
