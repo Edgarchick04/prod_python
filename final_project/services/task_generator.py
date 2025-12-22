@@ -17,4 +17,3 @@ class TaskGenerator:
             activity,
             group_size,
         )
-

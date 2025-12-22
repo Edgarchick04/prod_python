@@ -1,4 +1,4 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 
 
 class MainKeyboard:
@@ -76,7 +76,10 @@ class WalkKeyboard:
     )
     send_geoposition_keboard = ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="Отправить геопозицию", request_location=True)],
+            [KeyboardButton(
+                text="Отправить геопозицию",
+                request_location=True
+            )],
             [KeyboardButton(text="Назад")],
             [KeyboardButton(text="В главное меню")],
         ],
