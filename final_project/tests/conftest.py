@@ -125,13 +125,3 @@ def get_test_route():
 @pytest.fixture(name="storage_key")
 def create_storage_key(bot: MockedBot):
     return StorageKey(chat_id=TEST_USER_CHAT.id, user_id=TEST_USER.id, bot_id=bot.id)
-
-
-@pytest_asyncio.fixture()
-async def dispatcher():
-    dp = Dispatcher()
-    await dp.emit_startup()
-    try:
-        yield dp
-    finally:
-        await dp.emit_shutdown()

@@ -1,17 +1,14 @@
 import os
 from gigachat import GigaChat
-from dotenv import load_dotenv
 
-load_dotenv()
+from config import gigachat_config
 
-GIGACHAT_API_KEY = os.getenv("GIGACHAT_API_KEY")
-GIGACHAT_MODEL = "GigaChat"
 
 class GigaChatClient:
     def __init__(self):
         self.client = GigaChat(
-            credentials=GIGACHAT_API_KEY,
-            model=GIGACHAT_MODEL,
+            credentials=gigachat_config.api_key,
+            model=gigachat_config.model,
             verify_ssl_certs=False
         )
 

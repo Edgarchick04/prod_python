@@ -4,8 +4,8 @@ from aiogram.fsm.context import FSMContext
 from unittest.mock import AsyncMock, patch
 
 from handlers.walk_prep import route_generation_handler
-from handlers.keyboards import WalkKeyboard
-from states.walk_state import WalkState
+from handlers.keyboards import MainKeyboard, WalkKeyboard
+from states.walk_state import StartState, WalkState
 
 
 @pytest.mark.asyncio
@@ -62,9 +62,29 @@ async def test_route_generation_back(storage, storage_key):
 
 
 @pytest.mark.asyncio
+async def test_route_generation_go_main_menu(storage, storage_key):
+    message = AsyncMock()
+    message.text = "В главное меню"
+    state = FSMContext(
+        storage=storage,
+        key=storage_key
+    )
+    await route_generation_handler(message, state)
+    message.answer.assert_called_with(
+        "Выбери вариант из предложенных",
+        reply_markup=MainKeyboard.start_keyboard
+    )
+    tmp_state = await state.get_state()
+    assert tmp_state == StartState.main_menu
+
+
+@pytest.mark.asyncio
 async def test_route_generation_unexpected_message(storage, storage_key, message_text):
     message = AsyncMock()
-    message.text = message_text if message_text not in ["Назад", "Начать прогулку самостоятельно", "Сгенерировать маршрут"] else "Any"
+    message.text = message_text if message_text not in [
+        "Назад", "Начать прогулку самостоятельно",
+        "Сгенерировать маршрут", "В главное меню"
+    ] else "Any"
     state = FSMContext(
         storage=storage,
         key=storage_key

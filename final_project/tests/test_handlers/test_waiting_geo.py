@@ -3,8 +3,8 @@ from aiogram.fsm.context import FSMContext
 from unittest.mock import AsyncMock, patch
 
 from handlers.walk_prep import waiting_geo_handler
-from handlers.keyboards import WalkKeyboard
-from states.walk_state import WalkState
+from handlers.keyboards import MainKeyboard, WalkKeyboard
+from states.walk_state import StartState, WalkState
 
 
 @pytest.mark.asyncio
@@ -51,6 +51,24 @@ async def test_waiting_geo_back(storage, storage_key):
     )
     tmp_state = await state.get_state()
     assert tmp_state == WalkState.route_generation
+
+
+@pytest.mark.asyncio
+async def test_waiting_geo_go_main_menu(storage, storage_key):
+    message = AsyncMock()
+    message.text = "В главное меню"
+    message.location = None
+    state = FSMContext(
+        storage=storage,
+        key=storage_key
+    )
+    await waiting_geo_handler(message, state)
+    message.answer.assert_called_with(
+        "Выбери вариант из предложенных",
+        reply_markup=MainKeyboard.start_keyboard
+    )
+    tmp_state = await state.get_state()
+    assert tmp_state == StartState.main_menu
 
 
 @pytest.mark.asyncio

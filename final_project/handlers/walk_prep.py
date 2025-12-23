@@ -86,7 +86,7 @@ async def choosing_activity_handler(message: Message, state: FSMContext):
     if message.text in ["Прогулка", "Спорт", "Еда"]:
         await state.update_data(
             activity=message.text,
-            waiting_custom_mood=False
+            waiting_custom_activity=False
         )
         await message.answer(
             "Сколько человек с тобой гуляет?",
@@ -128,7 +128,7 @@ async def choosing_activity_handler(message: Message, state: FSMContext):
 
 @command_router.message(WalkState.choosing_group_size)
 async def choosing_group_size_handler(message: Message, state: FSMContext):
-    """Обработка выбора настроения"""
+    """Обработка выбора количества человек"""
     if message.text in ["1", "2", "3", "4+"]:
         await state.update_data(group_size=message.text)
         await message.answer(
