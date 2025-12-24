@@ -94,7 +94,7 @@ async def finish_walk(message: Message, state: FSMContext):
 async def walk_timer(message: Message, duration: int, state: FSMContext):
     """Замеряет время и завершает прогулку, в финале поставим duration * 60"""
     try:
-        await asyncio.sleep(duration * 60)
+        await asyncio.sleep(duration)
         current_state = await state.get_state()
         data = await state.get_data()
         if current_state == WalkState.in_walk:

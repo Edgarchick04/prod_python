@@ -77,7 +77,7 @@ async def test_choosing_activity_back(storage, storage_key):
     )
     await choosing_activity_handler(message, state)
     message.answer.assert_called_with(
-        "Какое у тебя сегодня настроение",
+        "Какое у тебя настроение?",
         reply_markup=WalkKeyboard.mood_keyboard
     )
     tmp_state = await state.get_state()

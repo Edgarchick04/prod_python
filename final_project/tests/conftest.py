@@ -87,7 +87,8 @@ def get_test_state():
         "task_state": "waiting_proof",
         "tasks_count": random.randint(0, 100),
         "duration": random.choice([30, 60, 90]),
-        "route": "any"
+        "route": "any",
+        "walk_id": 123
     }
 
 

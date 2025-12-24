@@ -40,7 +40,7 @@ async def test_choosing_mood_other(storage, storage_key):
     await state.set_state(WalkState.choosing_mood)
     await choosing_mood_handler(message, state)
     message.answer.assert_called_with(
-        "Напиши свое настроение:",
+        "Какое у тебя настроение?",
         reply_markup=ReplyKeyboardRemove()
     )
     tmp_state = await state.get_state()
@@ -77,7 +77,7 @@ async def test_choosing_mood_back(storage, storage_key):
     )
     await choosing_mood_handler(message, state)
     message.answer.assert_called_with(
-        "Сколько времени ты готов потратить на прогулку?",
+        "Введи желаемую длительность прогулки в минутах (только число):",
         reply_markup=WalkKeyboard.duration_keyboard
     )
     tmp_state = await state.get_state()
