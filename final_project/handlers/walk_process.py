@@ -2,7 +2,7 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, ReplyKeyboardRemove
 
-from services.statistics import set_walks_data
+from services.statistics import add_task_photo
 from services.task_generator import TaskGenerator
 
 from states.walk_state import WalkState
@@ -97,21 +97,23 @@ async def in_walk_handler(message: Message, state: FSMContext):
 
 @command_router.message(WalkState.in_walk, F.photo)
 async def task_photo_proof_handler(message: Message, state: FSMContext):
-    """Сохраняет фото-подтверждение выполнения задания"""
     data = await state.get_data()
-    if data["task_state"] == "waiting_proof":
-        photo_proof = message.photo[-1].file_id
-        await state.update_data({
-            "walk_state": "in_walk",
-            "task_state": "no_task",
-            "current_task": None,
-            "tasks_count": data.get("tasks_count", 0) + 1,
-            "task_photo": photo_proof,
-            "duration": data["duration"],
-            "route": data["route"]
-        })
-        await set_walks_data(message.from_user.id)
-        await message.answer(
-            "Круто, задание выполнено!\nХочешь получить новое?",
-            reply_markup=TaskKeyboard.task_generation_keyboard
-        )
+
+    if data["task_state"] != "waiting_proof":
+        return
+
+    photo_id = message.photo[-1].file_id
+    walk_id = data["walk_id"]
+
+    await add_task_photo(walk_id, photo_id)
+
+    await state.update_data(
+        task_state="no_task",
+        current_task=None,
+        tasks_count=data.get("tasks_count", 0) + 1
+    )
+
+    await message.answer(
+        "📸 Принято! Задание выполнено 💪\nХочешь ещё?",
+        reply_markup=TaskKeyboard.task_generation_keyboard
+    )

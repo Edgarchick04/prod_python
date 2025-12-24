@@ -18,15 +18,29 @@ route_generator = RouteGenerator()
 async def route_generation_choice_handler(message: Message, state: FSMContext):
     """Обработчик после выбора длительности прогулки
        user выбирает сгенерировать ли маршрут"""
+    data = await state.get_data()
     if message.text in ["30 минут", "60 минут", "90 минут"]:
         duration = int(message.text.split()[0])
-        await state.update_data(duration=duration)
+        await state.update_data(duration=duration, waiting_custom_duration=False)
         await message.answer(
             "Какое у тебя сегодня настроение?",
             reply_markup=WalkKeyboard.mood_keyboard
         )
         await state.set_state(WalkState.choosing_mood)
-    elif message.text == "Назад":
+    elif message.text == "Другое":
+        await state.update_data(waiting_custom_duration=True)
+        await message.answer(
+            "Введи желаемую длительность прогулки в минутах (только число):",
+            reply_markup=ReplyKeyboardRemove()
+        )
+    elif data.get("waiting_custom_duration"):
+        await state.update_data(duration=int(message.text), waiting_custom_duration=False)
+        await message.answer(
+            "Какое у тебя настроение?",
+            reply_markup=WalkKeyboard.mood_keyboard
+        )
+        await state.set_state(WalkState.choosing_mood)
+    elif message.text == "В главное меню":
         await message.answer(
             "Выбери вариант из предложенных",
             reply_markup=MainKeyboard.start_keyboard
@@ -52,7 +66,7 @@ async def choosing_mood_handler(message: Message, state: FSMContext):
     elif message.text == "Другое":
         await state.update_data(waiting_custom_mood=True)
         await message.answer(
-            "Напиши свое настроение:",
+            "Какое у тебя настроение?",
             reply_markup=ReplyKeyboardRemove()
         )
     elif data.get("waiting_custom_mood"):
@@ -62,10 +76,9 @@ async def choosing_mood_handler(message: Message, state: FSMContext):
             reply_markup=WalkKeyboard.activity_keyboard
         )
         await state.set_state(WalkState.choosing_activity)
-
     elif message.text == "Назад":
         await message.answer(
-            "Сколько времени ты готов потратить на прогулку?",
+            "Введи желаемую длительность прогулки в минутах (только число):",
             reply_markup=WalkKeyboard.duration_keyboard
         )
         await state.set_state(WalkState.choosing_duration)
@@ -112,7 +125,7 @@ async def choosing_activity_handler(message: Message, state: FSMContext):
 
     elif message.text == "Назад":
         await message.answer(
-            "Какое у тебя сегодня настроение",
+            "Какое у тебя настроение?",
             reply_markup=WalkKeyboard.mood_keyboard
         )
         await state.set_state(WalkState.choosing_mood)

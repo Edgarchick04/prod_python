@@ -29,6 +29,7 @@ class WalkKeyboard:
             [KeyboardButton(text="30 минут")],
             [KeyboardButton(text="60 минут")],
             [KeyboardButton(text="90 минут")],
+            [KeyboardButton(text="Другое")],
             [KeyboardButton(text="В главное меню")]
         ],
         resize_keyboard=True
