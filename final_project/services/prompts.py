@@ -35,7 +35,7 @@ def build_route_prompt(latitude: float, longitude: float, duration: int, mood: s
 def build_task_prompt(mood: str, activity: str, group_size: str) -> str:
     return f"""
 Роль: Ты — креативный организатор городских квестов.
-Задача: Придумай ОДНО конкретное игровое задание для компании из {group_size} чел.
+Задача: Придумай ОДНО конкретное игровое задание для компании из строго {group_size} чел.
 Если человек 1, то не надо давать задания требующие еще кого-то.
 
 Контекст:
