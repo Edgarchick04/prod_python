@@ -1,4 +1,4 @@
-from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.state import State, StatesGroup
 
 
 class WalkState(StatesGroup):
@@ -10,7 +10,6 @@ class WalkState(StatesGroup):
     route_generation = State()
     route_accessing = State()
     in_walk = State()
-    #walk_finished = State()
 
 
 class StartState(StatesGroup):

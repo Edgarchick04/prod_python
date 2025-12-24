@@ -1,6 +1,8 @@
 import asyncio
+
 from .gigachat_client import GigaChatClient
 from .prompts import build_task_prompt
+
 
 class TaskGenerator:
     def __init__(self):

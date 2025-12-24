@@ -21,7 +21,10 @@ async def route_generation_choice_handler(message: Message, state: FSMContext):
     data = await state.get_data()
     if message.text in ["30 минут", "60 минут", "90 минут"]:
         duration = int(message.text.split()[0])
-        await state.update_data(duration=duration, waiting_custom_duration=False)
+        await state.update_data(
+            duration=duration,
+            waiting_custom_duration=False
+        )
         await message.answer(
             "Какое у тебя сегодня настроение?",
             reply_markup=WalkKeyboard.mood_keyboard
@@ -34,7 +37,10 @@ async def route_generation_choice_handler(message: Message, state: FSMContext):
             reply_markup=ReplyKeyboardRemove()
         )
     elif data.get("waiting_custom_duration"):
-        await state.update_data(duration=int(message.text), waiting_custom_duration=False)
+        await state.update_data(
+            duration=int(message.text),
+            waiting_custom_duration=False
+        )
         await message.answer(
             "Какое у тебя настроение?",
             reply_markup=WalkKeyboard.mood_keyboard

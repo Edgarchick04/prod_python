@@ -1,8 +1,10 @@
-import json
-import re
 import asyncio
-import requests
+import json
 import math
+import re
+
+import requests
+
 from .gigachat_client import GigaChatClient
 from .prompts import build_route_prompt
 
@@ -13,7 +15,9 @@ def calculate_distance(lat1, lon1, lat2, lon2):
     phi1, phi2 = math.radians(lat1), math.radians(lat2)
     dphi = math.radians(lat2 - lat1)
     dlambda = math.radians(lon2 - lon1)
-    a = math.sin(dphi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
+    a = math.sin(dphi / 2) ** 2 + math.cos(
+        phi1
+    ) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
     return int(2 * R * math.atan2(math.sqrt(a), math.sqrt(1 - a)))
 
 
@@ -31,7 +35,11 @@ def fetch_nearby_places(lat: float, lon: float, radius: int = 2000) -> str:
     out center 20;
     """
     try:
-        response = requests.get(overpass_url, params={'data': overpass_query}, timeout=10)
+        response = requests.get(
+            overpass_url,
+            params={'data': overpass_query},
+            timeout=10
+        )
         data = response.json()
 
         places_data = []
@@ -55,7 +63,10 @@ def fetch_nearby_places(lat: float, lon: float, radius: int = 2000) -> str:
 
         sorted_places = sorted(unique_places.items(), key=lambda x: x[1])
 
-        result = [f"{name} ({dist}м от тебя)" for name, dist in sorted_places[:15]]
+        result = [
+            f"{name} ({dist}м от тебя)"
+            for name, dist in sorted_places[:15]
+        ]
 
         return ", ".join(result)
     except Exception as e:
@@ -75,7 +86,9 @@ def extract_json(text: str) -> dict:
 
         raw_json = match.group(1)
 
-        raw_json = raw_json.replace("“", '"').replace("”", '"').replace("‘", '"').replace("’", '"')
+        raw_json = raw_json.replace(
+            "“", '"'
+        ).replace("”", '"').replace("‘", '"').replace("’", '"')
         raw_json = re.sub(r'[\x00-\x1f]+', ' ', raw_json)
 
         raw_json = re.sub(r',\s*([\]}])', r'\1', raw_json)
@@ -83,18 +96,39 @@ def extract_json(text: str) -> dict:
         return json.loads(raw_json)
     except Exception as e:
         print(f"JSON extraction error: {e}")
-        return {"points": [{"name": "Интересное место рядом", "walk_time_min": 10, "task": "Наслаждайся видом"}]}
+        return {
+            "points": [{
+                "name": "Интересное место рядом",
+                "walk_time_min": 10,
+                "task": "Наслаждайся видом"
+            }]
+        }
 
 
 class RouteGenerator:
     def __init__(self):
         self.client = GigaChatClient()
 
-    def _generate_sync(self, latitude: float, longitude: float, duration: int, mood: str, activity: str) -> dict:
+    def _generate_sync(
+        self,
+        latitude: float,
+        longitude: float,
+        duration: int,
+        mood: str,
+        activity: str
+    ) -> dict:
         points = calculate_points(duration)
         nearby_places = fetch_nearby_places(latitude, longitude)
 
-        prompt = build_route_prompt(latitude, longitude, duration, mood, activity, points, nearby_places)
+        prompt = build_route_prompt(
+            latitude,
+            longitude,
+            duration,
+            mood,
+            activity,
+            points,
+            nearby_places
+        )
 
         raw = self.client.chat(prompt)
         data = extract_json(raw)
@@ -105,7 +139,14 @@ class RouteGenerator:
             "points": data.get("points", [])
         }
 
-    async def generate(self, latitude: float, longitude: float, duration: int, mood: str, activity: str) -> dict:
+    async def generate(
+        self,
+        latitude: float,
+        longitude: float,
+        duration: int,
+        mood: str,
+        activity: str
+    ) -> dict:
         return await asyncio.to_thread(
             self._generate_sync,
             latitude,

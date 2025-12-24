@@ -1,7 +1,9 @@
-from datetime import datetime
-from sqlalchemy import select, update, func
 import json
-from services.db import async_session, Walk, Photo
+from datetime import datetime
+
+from services.db import Photo, Walk, async_session
+
+from sqlalchemy import func, select, update
 
 
 async def start_walk(user_id: int, route: dict, duration: int) -> int:
@@ -18,6 +20,7 @@ async def start_walk(user_id: int, route: dict, duration: int) -> int:
         await session.refresh(new_walk)
         return new_walk.id
 
+
 async def add_task_photo(walk_id: int, file_id: str):
     async with async_session() as session:
         new_photo = Photo(walk_id=walk_id, file_id=file_id)
@@ -28,6 +31,7 @@ async def add_task_photo(walk_id: int, file_id: str):
         )
         await session.execute(stmt)
         await session.commit()
+
 
 async def finish_walk(walk_id: int):
     async with async_session() as session:
@@ -67,7 +71,13 @@ async def get_stats(user_id: int) -> str:
 
 async def get_walks_data(user_id: int) -> str:
     async with async_session() as session:
-        stmt = select(Walk).where(Walk.user_id == user_id).order_by(Walk.date.desc()).limit(20)
+        stmt = select(
+            Walk
+        ).where(
+            Walk.user_id == user_id
+        ).order_by(
+            Walk.date.desc()
+        ).limit(20)
         result = await session.execute(stmt)
         rows = result.scalars().all()
 
@@ -115,9 +125,16 @@ async def get_walk_photos(walk_id: int) -> list[str]:
         result = await session.execute(stmt)
         return list(result.scalars().all())
 
+
 async def get_walks_short(user_id: int) -> dict:
     async with async_session() as session:
-        stmt = select(Walk.id, Walk.date).where(Walk.user_id == user_id).order_by(Walk.date.desc()).limit(20)
+        stmt = select(
+            Walk.id, Walk.date
+        ).where(
+            Walk.user_id == user_id
+        ).order_by(
+            Walk.date.desc()
+        ).limit(20)
         result = await session.execute(stmt)
         rows = result.all()
 

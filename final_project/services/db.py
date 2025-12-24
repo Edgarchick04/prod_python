@@ -1,7 +1,13 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
-from sqlalchemy import BigInteger, String, Integer, ForeignKey, Text
 from config import db_config
+
+from sqlalchemy import BigInteger, ForeignKey, Integer, String, Text
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine
+)
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
 
 DB_USER = db_config.DB_USER
 DB_PASSWORD = db_config.DB_PASSWORD
@@ -17,7 +23,11 @@ DATABASE_URL = (
 
 engine = create_async_engine(DATABASE_URL, echo=False)
 
-async_session = async_sessionmaker(engine, expire_on_commit=False, class_=AsyncSession,)
+async_session = async_sessionmaker(
+    engine,
+    expire_on_commit=False,
+    class_=AsyncSession
+)
 
 
 class Base(DeclarativeBase):
@@ -34,7 +44,11 @@ class Walk(Base):
     tasks_count: Mapped[int] = mapped_column(Integer, default=0)
     route: Mapped[str] = mapped_column(Text, nullable=True)
 
-    photos = relationship("Photo", back_populates="walk", cascade="all, delete-orphan")
+    photos = relationship(
+        "Photo",
+        back_populates="walk",
+        cascade="all, delete-orphan"
+    )
 
 
 class Photo(Base):
@@ -45,6 +59,7 @@ class Photo(Base):
     file_id: Mapped[str] = mapped_column(String(255), nullable=False)
 
     walk = relationship("Walk", back_populates="photos")
+
 
 async def init_db():
     async with engine.begin() as conn:

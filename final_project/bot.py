@@ -7,8 +7,10 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from config import bot_config
+
 from handlers.routers import dp
-from services.db import init_db, engine
+
+from services.db import engine, init_db
 
 
 async def main() -> None:

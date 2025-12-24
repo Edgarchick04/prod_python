@@ -1,7 +1,6 @@
-import os
-from gigachat import GigaChat
-
 from config import gigachat_config
+
+from gigachat import GigaChat
 
 
 class GigaChatClient:
@@ -15,4 +14,3 @@ class GigaChatClient:
     def chat(self, prompt: str) -> str:
         response = self.client.chat(prompt)
         return response.choices[0].message.content
-

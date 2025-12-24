@@ -1,11 +1,10 @@
 import asyncio
-from datetime import datetime
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
-from services.statistics import start_walk
 from services.statistics import finish_walk as finish_walk_db
+from services.statistics import start_walk
 
 from states.walk_state import StartState, WalkState
 
@@ -13,6 +12,7 @@ from .keyboards import MainKeyboard, TaskKeyboard, WalkKeyboard
 
 
 active_timers = {}
+
 
 async def run_walk(message: Message, state: FSMContext):
     """Задает поведение бота во время прогулки пользователя"""

@@ -1,12 +1,12 @@
 from aiogram import Router
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, InputMediaPhoto
+from aiogram.types import InputMediaPhoto, Message
 
-from services.statistics import get_walks_short, get_walk_photos
 from services.statistics import get_stats, get_walks_data
+from services.statistics import get_walk_photos, get_walks_short
 
-from states.walk_state import StartState
 from states.user_walks import UserWalksState
+from states.walk_state import StartState
 
 from .keyboards import MainKeyboard, UserWalksKeyboard
 
@@ -23,7 +23,7 @@ async def statistics_handler(message: Message, state: FSMContext):
             f"{stats}\nЧто хочешь посмотреть о своих прогулках?",
             reply_markup=UserWalksKeyboard.user_walks_keyboard
         )
-        await state.set_state(StartState.user_walks )
+        await state.set_state(StartState.user_walks)
         return
     if message.text == "История маршрутов":
         walks_data = await get_walks_data(message.from_user.id)
@@ -54,7 +54,7 @@ async def statistics_handler(message: Message, state: FSMContext):
 
 @command_router.message(UserWalksState.viewing_photos)
 async def walk_photos_selection_handler(message: Message, state: FSMContext):
-
+    """Обработчик выбора пользователя в состоянии просмотра фото"""
     if message.text == "Назад":
         await message.answer(
             "Начни прогулку или посмотри историю прошлых прогулок",
@@ -69,7 +69,7 @@ async def walk_photos_selection_handler(message: Message, state: FSMContext):
             f"{stats}\nЧто хочешь посмотреть о своих прогулках?",
             reply_markup=UserWalksKeyboard.user_walks_keyboard
         )
-        await state.set_state(StartState.user_walks )
+        await state.set_state(StartState.user_walks)
         return
 
     if message.text == "История маршрутов":
@@ -87,13 +87,17 @@ async def walk_photos_selection_handler(message: Message, state: FSMContext):
     walk_id = walks_map.get(selected_num)
 
     if not walk_id:
-        await message.answer("Прогулки с таким номером нет в списке. Попробуй еще раз")
+        await message.answer(
+            "Прогулки с таким номером нет в списке. Попробуй еще раз"
+        )
         return
 
     photos = await get_walk_photos(walk_id)
 
     if not photos:
-        await message.answer(f"У прогулки №{selected_num} нет загруженных фотографий 😔")
+        await message.answer(
+            f"У прогулки №{selected_num} нет загруженных фотографий 😔"
+        )
     else:
         await message.answer(f"Лови фотографии с прогулки №{selected_num}:")
 
