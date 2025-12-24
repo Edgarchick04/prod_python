@@ -54,3 +54,4 @@ def build_task_prompt(mood: str, activity: str, group_size: str) -> str:
 
 ВЕРНИ ТОЛЬКО ТЕКСТ ЗАДАНИЯ БЕЗ КАВЫЧЕК И ПОЯСНЕНИЙ.
 """
+
