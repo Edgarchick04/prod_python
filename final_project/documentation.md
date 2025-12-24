@@ -174,7 +174,7 @@ erDiagram
     WALKS ||--o{ PHOTOS : contains
 ```
 
-## 5.1 Команда
+## 5. Команда
 
 ### Dev1: Петросян Эдгар
 
